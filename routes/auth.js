@@ -28,7 +28,8 @@ router.post('/register', async (req, res) => {
         password: hashedPassword,
         firstName: req.body.firstName,
         lastName: req.body.lastName,
-        dateOfBirth: req.body.dateOfBirth,
+        // YYYY-MM-DD
+        dateOfBirth: new Date(req.body.dateOfBirth),
     })
 
     try{
