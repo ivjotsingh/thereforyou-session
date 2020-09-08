@@ -15,7 +15,7 @@ const authRoutes = require('./routes/auth')
 
 // creating middleware
 app.use('/user', authRoutes)
-app.use(cors)
+// app.use(cors)
 
 const mongoose = require('mongoose')
 mongoose.connect(process.env.DB_CONNECTION,{ useNewUrlParser: true, useUnifiedTopology: true }, () => console.log("conected to DB..."))
@@ -25,10 +25,10 @@ mongoose.connect(process.env.DB_CONNECTION,{ useNewUrlParser: true, useUnifiedTo
 // express.json() returns a middleware which we use using app.use in request processing pipeline
 app.use(express.json());
 
-
 app.get('/', (req, res) => {
     return res.send("I am root!")
 })
+
 
 const port = process.env.PORT || 8000
 app.listen(port, () => console.log(`listening to port ${port}...`))
