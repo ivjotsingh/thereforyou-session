@@ -40,6 +40,7 @@ router.post("/register", async (req, res) => {
       password: hashedPassword,
       firstName: req.body.firstName,
       lastName: req.body.lastName,
+      dateOfBirth: dob,
     });
 
     let user_data = await user.save();
