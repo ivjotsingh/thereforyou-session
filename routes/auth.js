@@ -9,13 +9,15 @@ const jwt = require("jsonwebtoken");
 // model
 const User = require("../models/user");
 
-//application-level middle
+//application-level middleware
 router.use(express.json());
 
 router.post("/register", async (req, res) => {
   try {
-    const emailExists = await User.findOne({ email: req.body.email });
+    const userNameExists = await User.findOne({ userName: req.body.userName });
+    if (userNameExists) return res.status(400).send("user name already exists");
 
+    const emailExists = await User.findOne({ email: req.body.email });
     if (emailExists) return res.status(400).send("email already exists");
   } catch (err) {
     return res.status(500).send(err.message);
@@ -24,6 +26,14 @@ router.post("/register", async (req, res) => {
     // hashing password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
+
+    let dob = Date;
+    if (req.body.dateOfBirth) {
+      dob = new Date(req.body.dateOfBirth);
+    } else {
+      dob = null;
+    }
+
     const user = new User({
       userName: req.body.userName,
       email: req.body.email,
@@ -31,9 +41,7 @@ router.post("/register", async (req, res) => {
       firstName: req.body.firstName,
       lastName: req.body.lastName,
     });
-    if (req.body.dateOfBirth) {
-      user[$user.dateOfBirth] = new Date(req.body.dateOfBirth);
-    }
+
     let user_data = await user.save();
     return res.status(200).send(user_data);
   } catch (err) {
