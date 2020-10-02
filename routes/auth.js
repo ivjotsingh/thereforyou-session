@@ -61,7 +61,7 @@ router.post("/login", async (req, res) => {
       );
     }
     if (!user || !validPassword) {
-      return res.status(400).send("invalid username or password");
+      return res.status(400).send("invalid emailid or password");
     }
 
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);

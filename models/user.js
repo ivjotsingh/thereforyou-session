@@ -4,20 +4,20 @@ const UserSchema = mongoose.Schema({
   userName: {
     type: String,
     required: true,
-    max: 255,
-    min: 6,
+    maxlength: 255,
+    minlength: 6,
   },
   email: {
     type: String,
     required: true,
-    max: 555,
-    min: 6,
+    maxlength: 555,
+    minlength: 6,
   },
   password: {
     type: String,
     required: true,
-    max: 555,
-    min: 6,
+    maxlength: 555,
+    minlength: 6,
   },
   created: {
     type: Date,
@@ -30,14 +30,14 @@ const UserSchema = mongoose.Schema({
   firstName: {
     type: String,
     required: true,
-    max: 255,
-    min: 1,
+    maxlength: 255,
+    minlength: 1,
   },
   lastName: {
     type: String,
     required: true,
-    max: 255,
-    min: 1,
+    maxlength: 255,
+    minlength: 1,
   },
   dateOfBirth: {
     type: Date,

@@ -24,7 +24,7 @@ mongoose
     console.log(`Error while connecting to DB :${err}`);
   });
 
-//Cross Origin resource sharing
+//Cross Origin resource sharing for JWT
 const cors = require("cors");
 
 // importing Auth routes
