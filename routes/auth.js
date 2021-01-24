@@ -5,6 +5,7 @@ const router = express.Router();
 // library
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
 
 // model
 const User = require("../models/user");
@@ -59,16 +60,25 @@ router.post("/login", async (req, res) => {
         req.body.password,
         user.password
       );
-    }
-    if (!user || !validPassword) {
-      return res.status(400).send("invalid emailid or password");
-    }
 
-    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
+      if (!user || !validPassword) {
+        return res.status(400).send("invalid emailid or password");
+      }
+    }
+    const token = jwt.sign({ user: user.userName }, process.env.JWT_SECRET);
 
-    return res.header("auth-token", token).send("logged in successfully");
+    return res
+      .cookie("auth-token", token, {
+        maxAge: 900000,
+        //To mitigate XSS attacks
+        httpOnly: true,
+        //To mitigate interception ,over HTTPS only ,
+        // in dev env with HTTP this will be set to false
+        secure: process.env.NODE_ENV === "production" ? true : false,
+      })
+      .send("logged in successfully");
   } catch (err) {
-    return res.status(500).send(err.message);
+    return res.status(500).send("Server side error");
   }
 });
 
