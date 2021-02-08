@@ -4,11 +4,13 @@ const router = express.Router();
 
 // library
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 
 // model
-const User = require("../models/user");
+const User = require("../user/user");
+
+//controller
+const craeteTokens = require("../token/createTokens");
 
 //application-level middleware
 router.use(express.json());
@@ -62,22 +64,29 @@ router.post("/login", async (req, res) => {
       );
 
       if (!user || !validPassword) {
-        return res.status(400).send("invalid emailid or password");
+        return res.status(403).send("Invalid Emailid or Password");
       }
     }
-    const token = jwt.sign({ user: user.userName }, process.env.JWT_SECRET);
-
-    return res
-      .cookie("auth-token", token, {
-        maxAge: 900000,
-        //To mitigate XSS attacks
-        httpOnly: true,
-        //To mitigate interception ,over HTTPS only ,
-        // in dev env with HTTP this will be set to false
-        secure: process.env.NODE_ENV === "production" ? true : false,
-      })
-      .send("logged in successfully");
+    let { access_token, refresh_token } = await createTokens(user.userName);
+    res.cookie("auth-token", access_token, {
+      maxAge: 900000,
+      //To mitigate XSS attacks
+      httpOnly: true,
+      //To mitigate interception ,over HTTPS only ,
+      // in dev env with HTTP this will be set to false
+      secure: process.env.NODE_ENV === "production" ? true : false,
+    });
+    res.cookie("refresh-token", refresh_token, {
+      maxAge: 900000,
+      //To mitigate XSS attacks
+      httpOnly: true,
+      //To mitigate interception ,over HTTPS only ,
+      // in dev env with HTTP this will be set to false
+      secure: process.env.NODE_ENV === "production" ? true : false,
+    });
+    return res.status(200).send("Logged in successfully!");
   } catch (err) {
+    console.log(err);
     return res.status(500).send("Server side error");
   }
 });
